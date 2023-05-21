@@ -1,6 +1,6 @@
 import { Plugin } from 'vite';
 import { readFile } from 'fs/promises';
-import { DEFAULT_TEMPLATE_PATH } from '../constants';
+import { CLIENT_ENTRY_PATH, DEFAULT_TEMPLATE_PATH } from '../constants';
 
 export function pluginIndexHtml(): Plugin {
   return {
@@ -15,10 +15,21 @@ export function pluginIndexHtml(): Plugin {
       return () => {
         server.middlewares.use(async (req, res, next) => {
           // 读取 template.html 内容
-          const content = await readFile(DEFAULT_TEMPLATE_PATH, 'utf-8');
-          // 响应 Html 给浏览器
-          res.setHeader('Content-Type', 'text/html');
-          res.end(content);
+          let content = await readFile(DEFAULT_TEMPLATE_PATH, 'utf-8');
+          try {
+            // 注入 vite 热更新
+            content = await server.transformIndexHtml(
+              req.url,
+              content,
+              req.originalUrl,
+            );
+            res.statusCode = 200;
+            // 响应 Html 给浏览器
+            res.setHeader('Content-Type', 'text/html');
+            res.end(content);
+          } catch (e) {
+            return next(e);
+          }
         });
       };
     },
