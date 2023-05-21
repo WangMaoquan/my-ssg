@@ -5,6 +5,21 @@ import { CLIENT_ENTRY_PATH, DEFAULT_TEMPLATE_PATH } from '../constants';
 export function pluginIndexHtml(): Plugin {
   return {
     name: 'decade:index-html',
+    transformIndexHtml(html) {
+      return {
+        html,
+        tags: [
+          {
+            tag: 'script',
+            attrs: {
+              type: 'module',
+              src: `/@fs/${CLIENT_ENTRY_PATH}`,
+            },
+            injectTo: 'body',
+          },
+        ],
+      };
+    },
     /**
      * 注册中间件
      * 放在 configureServer 的回调
