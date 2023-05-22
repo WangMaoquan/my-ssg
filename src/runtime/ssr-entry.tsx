@@ -8,5 +8,6 @@ import { renderToString } from 'react-dom/server';
  */
 
 export function render() {
+  // renderToString 将组件 变成 html 字符串
   return renderToString(<App />);
 }

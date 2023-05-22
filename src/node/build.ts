@@ -1,5 +1,8 @@
 import { InlineConfig, build as viteBuild } from 'vite';
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
+import { join, resolve } from 'path';
+import type { RollupOutput } from 'rollup';
+import { writeFile, remove } from 'fs-extra';
 
 export async function bundle(root: string) {
   try {
@@ -37,10 +40,46 @@ export async function bundle(root: string) {
       clientBuild(),
       serverBuild(),
     ]);
-    return [clientBundle, serverBundle];
+    return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {
     console.log(e);
   }
+}
+
+export async function renderPage(
+  render: () => string,
+  root: string,
+  clientBundle: RollupOutput,
+) {
+  // 从 bundle 中找到 chunk
+  const clientChunk = clientBundle.output.find(
+    (chunk) => chunk.type === 'chunk' && chunk.isEntry,
+  );
+
+  console.log(`Rendering page in server side...`);
+
+  // 获取服务端的 html 字符串
+  const appHtml = render();
+
+  // 插入到 html 里面
+  // 注释注入 script
+  const html = `
+  <!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>title</title>
+    <meta name="description" content="xxx">
+  </head>
+  <body>
+    <div id="root">${appHtml}</div>
+    <script type="module" src="/${clientChunk?.fileName}"></script>
+  </body>
+</html>`.trim();
+  // 构建好对应的html 存放在 磁盘上
+  await writeFile(join(root, 'build', 'index.html'), html);
+  await remove(join(root, '.temp'));
 }
 
 export async function build(root: string) {
@@ -48,5 +87,9 @@ export async function build(root: string) {
   const [clientBundle, serverBundle] = await bundle(root);
 
   // 2. 引入 server-entry
+  const serverEntryPath = resolve(root, '.temp', 'ssr-entry.js');
+
   // 3. 服务端渲染, 返回 html
+  const { render } = require(serverEntryPath);
+  await renderPage(render, root, clientBundle);
 }
