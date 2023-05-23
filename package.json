@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tsc": "tsc",
-    "start": "decade"
+    "start": "tsup --watch",
+    "build": "tsup"
   },
   "bin": {
     "decade": "bin/decade.js"
@@ -18,6 +18,7 @@
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
     "rollup": "^3.23.0",
+    "tsup": "^6.7.0",
     "typescript": "^5.0.4"
   },
   "dependencies": {
