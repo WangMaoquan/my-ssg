@@ -4,6 +4,10 @@ import { join, resolve } from 'path';
 import type { RollupOutput } from 'rollup';
 import { writeFile, remove } from 'fs-extra';
 
+// import ora from 'ora'; ora 这个包的产物只是 esm, 打包后的产物是在node上用的, node 是cjs, require('ora') 这样 require 获取异步模块的
+
+const dynamicImport = new Function('m', 'return import(m)');
+
 export async function bundle(root: string) {
   try {
     // 将config 抽离 通过 isServer 标志区分
@@ -32,7 +36,22 @@ export async function bundle(root: string) {
       return viteBuild(resolveViteBuildConfig(true));
     };
 
-    console.log('building client + server bundles...');
+    // const { default: ora } = await import('ora'); // 换成 dynamicImport
+    /**
+     * 笔记说到 可以是用 await import(packageName)来使用 esm 的包
+     * 但是这里还是不行, 我们看打包后的产物发现 还是变成 require(packageName)
+     * 这是因为 tsc 把 await import 还是编译成了 require
+     * const { default: ora } = await Promise.resolve().then(() => require('ora'));
+     *
+     * 我们怎么 绕过 tsc 呢
+     *
+     * 使用 dynamicImport
+     *
+     * const dynamicImport = new Function('m', 'return import(m)');
+     */
+    const { default: ora } = await dynamicImport('ora');
+    const spinner = ora();
+    spinner.start('building client + server bundles...');
     // 下面这种写法 serverbuild 其实可以和 clientBuild 同时执行, 所以可以使用 promise.all
     // await clientBuild();
     // await serverBuild();
@@ -40,6 +59,7 @@ export async function bundle(root: string) {
       clientBuild(),
       serverBuild(),
     ]);
+    spinner.stop();
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
   } catch (e) {
     console.log(e);
