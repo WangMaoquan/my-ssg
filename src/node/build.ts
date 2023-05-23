@@ -2,11 +2,23 @@ import { InlineConfig, build as viteBuild } from 'vite';
 import { CLIENT_ENTRY_PATH, SERVER_ENTRY_PATH } from './constants';
 import { join, resolve } from 'path';
 import type { RollupOutput } from 'rollup';
-import { writeFile, remove } from 'fs-extra';
+import fs from 'fs-extra';
+import { pathToFileURL } from 'url';
+/**
+ * import { writeFile, remove } from 'fs-extra'; 这是 cjs 的包
+ * 我们 统一 使用的打包成 esm 的产物 也就是 cli.mjs
+ * 所以我们需要开启 "esModuleInterop": true 这个配置
+ *
+ * import fs from 'fs-extra'; 这行代码就不会报错了
+ */
 
 // import ora from 'ora'; ora 这个包的产物只是 esm, 打包后的产物是在node上用的, node 是cjs, require('ora') 这样 require 获取异步模块的
-
-const dynamicImport = new Function('m', 'return import(m)');
+/**
+ * const dynamicImport = new Function('m', 'return import(m)');
+ * 统一使用 esm 的厚 ora 原本就是 esm, 所以不需要 dynamicImport 这样的黑魔法了
+ * 直接import 就好了
+ */
+import ora from 'ora';
 
 export async function bundle(root: string) {
   try {
@@ -49,7 +61,6 @@ export async function bundle(root: string) {
      *
      * const dynamicImport = new Function('m', 'return import(m)');
      */
-    const { default: ora } = await dynamicImport('ora');
     const spinner = ora();
     spinner.start('building client + server bundles...');
     // 下面这种写法 serverbuild 其实可以和 clientBuild 同时执行, 所以可以使用 promise.all
@@ -98,18 +109,22 @@ export async function renderPage(
   </body>
 </html>`.trim();
   // 构建好对应的html 存放在 磁盘上
-  await writeFile(join(root, 'build', 'index.html'), html);
-  await remove(join(root, '.temp'));
+  await fs.writeFile(join(root, 'build', 'index.html'), html);
+  await fs.remove(join(root, '.temp'));
 }
 
 export async function build(root: string) {
   // 1. 打包两份 bundle client/server 都是基于 vite 的build
-  const [clientBundle, serverBundle] = await bundle(root);
+  const [clientBundle, serverBundle] = (await bundle(root))!;
 
   // 2. 引入 server-entry
   const serverEntryPath = resolve(root, '.temp', 'ssr-entry.js');
 
   // 3. 服务端渲染, 返回 html
-  const { render } = require(serverEntryPath);
+  /**
+   * const { render } = require(serverEntryPath);
+   * 使用esm 统一后 require 改成 import 就好了
+   */
+  const { render } = await import(pathToFileURL(serverEntryPath).toString());
   await renderPage(render, root, clientBundle);
 }

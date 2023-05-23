@@ -4,6 +4,10 @@
     "outDir": "dist",
     "rootDir": "src",
     "target": "ESNext",
-    "jsx": "react-jsx"
-  }
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+  },
+  "exclude": [
+    "tsup.config.ts"
+  ]
 }
