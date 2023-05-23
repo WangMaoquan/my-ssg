@@ -13,11 +13,11 @@ export function pluginIndexHtml(): Plugin {
             tag: 'script',
             attrs: {
               type: 'module',
-              src: `/@fs/${CLIENT_ENTRY_PATH}`,
+              src: `/@fs/${CLIENT_ENTRY_PATH}`
             },
-            injectTo: 'body',
-          },
-        ],
+            injectTo: 'body'
+          }
+        ]
       };
     },
     /**
@@ -36,7 +36,7 @@ export function pluginIndexHtml(): Plugin {
             content = await server.transformIndexHtml(
               req.url,
               content,
-              req.originalUrl,
+              req.originalUrl
             );
             res.statusCode = 200;
             // 响应 Html 给浏览器
@@ -47,6 +47,6 @@ export function pluginIndexHtml(): Plugin {
           }
         });
       };
-    },
+    }
   };
 }

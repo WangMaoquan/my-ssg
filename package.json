@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "tsup --watch",
-    "build": "tsup"
+    "build": "tsup",
+    "lint": "eslint --fix --ext .ts,.tsx,.js,.jsx ./",
+    "prepare": "husky install"
   },
   "bin": {
     "decade": "bin/decade.js"
@@ -17,6 +19,12 @@
     "@types/node": "^20.2.1",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
+    "@typescript-eslint/eslint-plugin": "^5.59.7",
+    "@typescript-eslint/parser": "^5.59.7",
+    "eslint": "^8.41.0",
+    "eslint-plugin-react": "^7.32.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
     "rollup": "^3.23.0",
     "tsup": "^6.7.0",
     "typescript": "^5.0.4"
@@ -25,8 +33,11 @@
     "@types/fs-extra": "^11.0.1",
     "@vitejs/plugin-react": "^4.0.0",
     "cac": "^6.7.14",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "fs-extra": "^11.1.1",
     "ora": "^6.3.1",
+    "prettier": "^2.8.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite": "^4.3.8"

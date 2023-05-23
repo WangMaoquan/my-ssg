@@ -33,10 +33,10 @@ export async function bundle(root: string) {
           rollupOptions: {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH, // 打包的入口
             output: {
-              format: isServer ? 'cjs' : 'esm', // 打包后代码的 格式
-            },
-          },
-        },
+              format: isServer ? 'cjs' : 'esm' // 打包后代码的 格式
+            }
+          }
+        }
       } as InlineConfig;
     };
 
@@ -68,7 +68,7 @@ export async function bundle(root: string) {
     // await serverBuild();
     const [clientBundle, serverBundle] = await Promise.all([
       clientBuild(),
-      serverBuild(),
+      serverBuild()
     ]);
     spinner.stop();
     return [clientBundle, serverBundle] as [RollupOutput, RollupOutput];
@@ -80,14 +80,14 @@ export async function bundle(root: string) {
 export async function renderPage(
   render: () => string,
   root: string,
-  clientBundle: RollupOutput,
+  clientBundle: RollupOutput
 ) {
   // 从 bundle 中找到 chunk
   const clientChunk = clientBundle.output.find(
-    (chunk) => chunk.type === 'chunk' && chunk.isEntry,
+    (chunk) => chunk.type === 'chunk' && chunk.isEntry
   );
 
-  console.log(`Rendering page in server side...`);
+  console.log('Rendering page in server side...');
 
   // 获取服务端的 html 字符串
   const appHtml = render();

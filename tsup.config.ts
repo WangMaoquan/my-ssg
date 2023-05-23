@@ -7,5 +7,5 @@ export default defineConfig({
   outDir: 'dist', // 产物输出目录
   format: ['cjs', 'esm'], // 产物的格式
   dts: true, // 类型文件生成
-  shims: true,
+  shims: true
 });
