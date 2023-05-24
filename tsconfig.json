@@ -8,6 +8,7 @@
     "esModuleInterop": true,
   },
   "exclude": [
-    "tsup.config.ts"
+    "tsup.config.ts",
+    "vitest.config.ts"
   ]
 }
