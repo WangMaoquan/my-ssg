@@ -54,3 +54,14 @@ export async function resolveConfig(
     return [configPath, {} as UserConfig] as const;
   }
 }
+
+export function defineConfig(config: UserConfig): UserConfig;
+// export function defineConfig(config: Promise<UserConfig>): Promise<UserConfig>;
+export function defineConfig(config: () => UserConfig): () => UserConfig;
+export function defineConfig(
+  config: () => Promise<UserConfig>
+): () => Promise<UserConfig>;
+
+export function defineConfig(config: RawConfig) {
+  return config;
+}
