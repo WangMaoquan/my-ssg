@@ -1,7 +1,8 @@
 import { Plugin, ViteDevServer } from 'vite';
 import { SiteConfig } from 'shared/types';
-import { relative } from 'path';
+import { join, relative } from 'path';
 import { RestartDevServer } from 'node/dev';
+import { PACKAGE_ROOT } from 'node/constants';
 
 const SITE_DATA_ID = 'decade:site-data';
 
@@ -48,6 +49,16 @@ export function pluginConfig(
         // 方案二 手动执行 dev.ts createDevServer
         restart();
       }
+    },
+    // 这个钩子会和 vite 的 config 自动合并
+    config() {
+      return {
+        resolve: {
+          alias: {
+            '@runtime': join(PACKAGE_ROOT, 'src', 'runtime', 'index.ts')
+          }
+        }
+      };
     }
   };
 }

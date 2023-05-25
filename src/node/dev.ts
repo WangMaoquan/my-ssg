@@ -13,7 +13,7 @@ export async function createDevServer(root: string, restart: RestartDevServer) {
   const config = await resolveConfig(root, 'serve', 'development');
   console.log('config', config);
   return createServer({
-    root,
+    root: PACKAGE_ROOT, // 如果把 root 设为 docs 目录，那么当你访问约定式路由的时候，Vite 会直接给你返回 tsx 文件的编译结果
     plugins: [pluginIndexHtml(), pluginReact(), pluginConfig(config, restart)],
     server: {
       fs: {
