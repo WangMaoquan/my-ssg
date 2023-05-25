@@ -3,6 +3,7 @@ import { pluginIndexHtml } from './plugins/indexHtml';
 import pluginReact from '@vitejs/plugin-react';
 import { PACKAGE_ROOT } from './constants';
 import { resolveConfig } from './config';
+import { pluginConfig } from './plugins/config';
 
 export async function createDevServer(root: string) {
   // 获取 config 后面两个参数先 写死
@@ -10,7 +11,7 @@ export async function createDevServer(root: string) {
   console.log('config', config);
   return createServer({
     root,
-    plugins: [pluginIndexHtml(), pluginReact()],
+    plugins: [pluginIndexHtml(), pluginReact(), pluginConfig(config)],
     server: {
       fs: {
         allow: [PACKAGE_ROOT] // 允许访问 根目录下所有文件, 都是合法的
