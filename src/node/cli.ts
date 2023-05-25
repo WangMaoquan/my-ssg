@@ -1,5 +1,7 @@
 import cac from 'cac';
 import { build } from './build';
+import { resolveConfig } from './config';
+import { resolve } from 'path';
 const cli = cac('decade').version('0.0.1').help();
 
 /**
@@ -25,7 +27,9 @@ cli.command('dev [root]', 'start dev server').action(async (root: string) => {
 cli
   .command('build [root]', 'build in production')
   .action(async (root: string) => {
-    await build(root);
+    root = resolve(root);
+    const config = await resolveConfig(root, 'build', 'production');
+    await build(root, config);
     console.log('build', root);
   });
 

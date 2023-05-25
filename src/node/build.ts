@@ -19,17 +19,26 @@ import { pathToFileURL } from 'url';
  * 直接import 就好了
  */
 import ora from 'ora';
+import { SiteConfig } from 'shared/types';
+import pluginReact from '@vitejs/plugin-react';
+import { pluginConfig } from './plugins/config';
 
-export async function bundle(root: string) {
+export async function bundle(root: string, config: SiteConfig) {
   try {
     // 将config 抽离 通过 isServer 标志区分
     const resolveViteBuildConfig = (isServer: boolean) => {
       return {
         mode: 'production', // 指定模式
         root,
+        plugins: [pluginReact(), pluginConfig(config)],
+        ssr: {
+          // 注意加上这个配置，防止 cjs 产物中 require ESM 的产物，因为 react-router-dom 的产物为 ESM 格式
+          noExternal: ['react-router-dom']
+        },
         build: {
+          minify: false,
           ssr: isServer, // 开启ssr
-          outDir: isServer ? '.temp' : 'build', // 指定打包在那个目录
+          outDir: isServer ? join('.temp') : 'build', // 指定打包在那个目录
           rollupOptions: {
             input: isServer ? SERVER_ENTRY_PATH : CLIENT_ENTRY_PATH, // 打包的入口
             output: {
@@ -113,9 +122,9 @@ export async function renderPage(
   await fs.remove(join(root, '.temp'));
 }
 
-export async function build(root: string) {
+export async function build(root: string, config: SiteConfig) {
   // 1. 打包两份 bundle client/server 都是基于 vite 的build
-  const [clientBundle, serverBundle] = (await bundle(root))!;
+  const [clientBundle, serverBundle] = (await bundle(root, config))!;
 
   // 2. 引入 server-entry
   const serverEntryPath = resolve(root, '.temp', 'ssr-entry.js');

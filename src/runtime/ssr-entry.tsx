@@ -1,5 +1,6 @@
 import { App } from './App';
 import { renderToString } from 'react-dom/server';
+import { StaticRouter } from 'react-router-dom/server';
 
 /**
  * SSG 本质是构建阶段的 SSR, 而当下的 SSR 会采用同构架构, 也就是同样的组件 需要运行在服务端也要运行在客户端
@@ -9,5 +10,10 @@ import { renderToString } from 'react-dom/server';
 
 export function render() {
   // renderToString 将组件 变成 html 字符串
-  return renderToString(<App />);
+  return renderToString(
+    // 先实现单路由的打包
+    <StaticRouter location={'/guide/a'}>
+      <App />
+    </StaticRouter>
+  );
 }

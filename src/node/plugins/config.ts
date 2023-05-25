@@ -8,7 +8,7 @@ const SITE_DATA_ID = 'decade:site-data';
 
 export function pluginConfig(
   siteConfig: SiteConfig,
-  restart: RestartDevServer
+  restart?: RestartDevServer
 ): Plugin {
   let server: ViteDevServer | null = null;
   return {
