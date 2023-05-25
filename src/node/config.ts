@@ -26,7 +26,7 @@ export async function resolveUserConfig(
   root: string,
   command: 'serve' | 'build',
   mode: 'development' | 'production'
-): Promise<[string, UserConfig]> {
+): Promise<[string, UserConfig, string[]]> {
   // 1. 获取配置文件路径 支持 js/ ts
   const configPath = getUserConfigPath(root);
   // 2. 读取配置文件的内容 使用 vite 内置的方法
@@ -44,7 +44,10 @@ export async function resolveUserConfig(
   }; // 这一步是让 loadConfigFromFile 返回的 config 变成 RawConfig
 
   if (result) {
-    const { config: rawConfig = {} } = result;
+    const {
+      config: rawConfig = {},
+      dependencies: configFileDependencies = []
+    } = result;
     // 1. object
     // 2. promise
     // 3. function
@@ -53,9 +56,9 @@ export async function resolveUserConfig(
       ? rawConfig()
       : rawConfig);
 
-    return [configPath, userConfig];
+    return [configPath, userConfig, configFileDependencies];
   } else {
-    return [configPath, {}];
+    return [configPath, {}, []];
   }
 }
 
@@ -73,11 +76,13 @@ export async function resolveConfig(
   command: 'serve' | 'build', // 指令
   mode: 'development' | 'production' // 模式
 ) {
-  const [configPath, userConfig] = await resolveUserConfig(root, command, mode);
+  const [configPath, userConfig, configFileDependencies] =
+    await resolveUserConfig(root, command, mode);
   return {
     configPath,
     siteData: resolveSiteData(userConfig),
-    root
+    root,
+    configFileDependencies
   } as SiteConfig;
 }
 

@@ -28,7 +28,10 @@ export function pluginConfig(
     },
     // 实现修改 config 文件 自动重启 server
     async handleHotUpdate(ctx) {
-      const customWatchedFiles = [siteConfig.configPath]; // 需要监听变化的文件
+      const customWatchedFiles = [
+        siteConfig.configPath,
+        ...(siteConfig.configFileDependencies || []) // config 的依赖文件
+      ]; // 需要监听变化的文件
       const include = (id: string) =>
         customWatchedFiles.some((file) => id.includes(file));
       if (include) {
