@@ -1,7 +1,5 @@
 import cac from 'cac';
-import { createDevServer } from './dev';
 import { build } from './build';
-
 const cli = cac('decade').version('0.0.1').help();
 
 /**
@@ -10,10 +8,18 @@ const cli = cac('decade').version('0.0.1').help();
  * .action 执行回调
  */
 cli.command('dev [root]', 'start dev server').action(async (root: string) => {
-  const server = await createDevServer(root);
-  await server.listen();
-  server.printUrls();
-  console.log('dev', root);
+  // 使用 dev.ts 最后打包的产物
+  const createServer = async () => {
+    const { createDevServer } = await import('./dev.js');
+    const server = await createDevServer(root, async () => {
+      await server.close();
+      await createServer();
+    });
+    await server.listen();
+    server.printUrls();
+    console.log('dev', root);
+  };
+  await createServer();
 });
 
 cli
