@@ -1,9 +1,9 @@
 import { createServer } from 'vite';
-import { pluginIndexHtml } from './plugins/indexHtml';
+import { pluginIndexHtml } from './plugins-decade/indexHtml';
 import pluginReact from '@vitejs/plugin-react';
 import { PACKAGE_ROOT } from './constants';
 import { resolveConfig } from './config';
-import { pluginConfig } from './plugins/config';
+import { pluginConfig } from './plugins-decade/config';
 
 export type RestartDevServer = () => Promise<void>;
 

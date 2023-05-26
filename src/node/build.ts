@@ -21,7 +21,7 @@ import { pathToFileURL } from 'url';
 import ora from 'ora';
 import { SiteConfig } from 'shared/types';
 import pluginReact from '@vitejs/plugin-react';
-import { pluginConfig } from './plugins/config';
+import { pluginConfig } from './plugins-decade/config';
 
 export async function bundle(root: string, config: SiteConfig) {
   try {
