@@ -17,6 +17,7 @@ import rehypePluginSlug from 'rehype-slug';
  */
 import remarkPluginMDXFrontMatter from 'remark-mdx-frontmatter';
 import remarkPluginFrontMatter from 'remark-frontmatter';
+import { rehypePluginPreWrapper } from './rehype-plugins/preWrapper';
 
 export function pluginMdxRollup() {
   return pluginMdx({
@@ -38,7 +39,8 @@ export function pluginMdxRollup() {
             value: '#'
           }
         }
-      ]
+      ],
+      rehypePluginPreWrapper
     ]
   });
 }
