@@ -4,9 +4,27 @@ import remarkGFM from 'remark-gfm';
 import rehypePluginAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePluginSlug from 'rehype-slug';
 
+/**
+ * 下面两个插件 实现获取 mdx 元数据
+ *
+ * mdx 开头
+ *
+ * ---
+ * title: "happy day"
+ * ---
+ *
+ * 这样的
+ */
+import remarkPluginMDXFrontMatter from 'remark-mdx-frontmatter';
+import remarkPluginFrontMatter from 'remark-frontmatter';
+
 export function pluginMdxRollup() {
   return pluginMdx({
-    remarkPlugins: [remarkGFM],
+    remarkPlugins: [
+      remarkGFM,
+      remarkPluginFrontMatter,
+      remarkPluginMDXFrontMatter
+    ],
     rehypePlugins: [
       rehypePluginSlug,
       [
