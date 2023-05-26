@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
 import path from 'path';
 import { RouteService } from './RouteService';
+import { normalizePath } from 'vite';
 
 describe('RouteService', async () => {
   const testDir = path.join(__dirname, 'fixtures');
@@ -24,16 +25,16 @@ describe('RouteService', async () => {
     // ci 时的路径 是不一样的
     const resultRoutes = routeMeta.map((i) => ({
       ...i,
-      absolutePath: i.absolutePath.replace(testDir, 'TEST_DIR')
+      absolutePath: i.absolutePath.replace(normalizePath(testDir), 'TEST_DIR')
     }));
     expect(resultRoutes).toMatchInlineSnapshot(`
       [
         {
-          "absolutePath": "D:/桌面/my-ssg/src/node/plugin-routes/fixtures/a.md",
+          "absolutePath": "TEST_DIR/a.md",
           "routePath": "/a",
         },
         {
-          "absolutePath": "D:/桌面/my-ssg/src/node/plugin-routes/fixtures/guide/index.mdx",
+          "absolutePath": "TEST_DIR/guide/index.mdx",
           "routePath": "/guide/",
         },
       ]
@@ -47,7 +48,7 @@ describe('RouteService', async () => {
             import React from 'react';
             import Route0 from 'D:/桌面/my-ssg/src/node/plugin-routes/fixtures/a.md'
       import Route1 from 'D:/桌面/my-ssg/src/node/plugin-routes/fixtures/guide/index.mdx'
-            export const route = [
+            export const routes = [
               {
                   path: '/a',
                   element: React.createElement(Route0)
@@ -58,13 +59,16 @@ describe('RouteService', async () => {
             ]
           "
     `);
-    const formatCode = generateCode.replaceAll(testDir, 'TEST_DIR');
+    const formatCode = generateCode.replaceAll(
+      normalizePath(testDir),
+      'TEST_DIR'
+    );
     expect(formatCode).toMatchInlineSnapshot(`
       "
             import React from 'react';
-            import Route0 from 'D:/桌面/my-ssg/src/node/plugin-routes/fixtures/a.md'
-      import Route1 from 'D:/桌面/my-ssg/src/node/plugin-routes/fixtures/guide/index.mdx'
-            export const route = [
+            import Route0 from 'TEST_DIR/a.md'
+      import Route1 from 'TEST_DIR/guide/index.mdx'
+            export const routes = [
               {
                   path: '/a',
                   element: React.createElement(Route0)
