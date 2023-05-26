@@ -46,8 +46,9 @@ describe('RouteService', async () => {
     expect(generateCode).toMatchInlineSnapshot(`
       "
             import React from 'react';
-            import Route0 from 'D:/桌面/my-ssg/src/node/plugin-routes/fixtures/a.md'
-      import Route1 from 'D:/桌面/my-ssg/src/node/plugin-routes/fixtures/guide/index.mdx'
+            import loadable from '@loadable/component'
+            const Route0 = loadable(() => import('D:/桌面/my-ssg/src/node/plugin-routes/fixtures/a.md'))
+      const Route1 = loadable(() => import('D:/桌面/my-ssg/src/node/plugin-routes/fixtures/guide/index.mdx'))
             export const routes = [
               {
                   path: '/a',
@@ -66,8 +67,9 @@ describe('RouteService', async () => {
     expect(formatCode).toMatchInlineSnapshot(`
       "
             import React from 'react';
-            import Route0 from 'TEST_DIR/a.md'
-      import Route1 from 'TEST_DIR/guide/index.mdx'
+            import loadable from '@loadable/component'
+            const Route0 = loadable(() => import('TEST_DIR/a.md'))
+      const Route1 = loadable(() => import('TEST_DIR/guide/index.mdx'))
             export const routes = [
               {
                   path: '/a',
