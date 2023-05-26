@@ -1,10 +1,7 @@
 import { createServer } from 'vite';
-import { pluginIndexHtml } from './plugins-decade/indexHtml';
-import pluginReact from '@vitejs/plugin-react';
 import { PACKAGE_ROOT } from './constants';
 import { resolveConfig } from './config';
-import { pluginConfig } from './plugins-decade/config';
-import { pluginRoutes } from './plugin-routes';
+import { createVitePlugins } from './vitePlugin';
 
 export type RestartDevServer = () => Promise<void>;
 
@@ -15,14 +12,7 @@ export async function createDevServer(root: string, restart: RestartDevServer) {
   console.log('config', config);
   return createServer({
     root: PACKAGE_ROOT, // 如果把 root 设为 docs 目录，那么当你访问约定式路由的时候，Vite 会直接给你返回 tsx 文件的编译结果
-    plugins: [
-      pluginIndexHtml(),
-      pluginReact(),
-      pluginConfig(config, restart),
-      pluginRoutes({
-        root: config.root
-      })
-    ],
+    plugins: [...createVitePlugins({ config, restart })],
     server: {
       fs: {
         allow: [PACKAGE_ROOT] // 允许访问 根目录下所有文件, 都是合法的
