@@ -6,3 +6,9 @@ declare module 'decade:site-data' {
   const siteData: UserConfig;
   export default siteData;
 }
+
+declare module 'decade:routes' {
+  import type { RouteObject } from 'react-router-dom';
+  const routes: RouteObject[];
+  export { routes };
+}
