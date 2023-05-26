@@ -12,7 +12,7 @@ export async function createDevServer(root: string, restart: RestartDevServer) {
   console.log('config', config);
   return createServer({
     root: PACKAGE_ROOT, // 如果把 root 设为 docs 目录，那么当你访问约定式路由的时候，Vite 会直接给你返回 tsx 文件的编译结果
-    plugins: createVitePlugins({ config, restart }),
+    plugins: await createVitePlugins({ config, restart }),
     server: {
       fs: {
         allow: [PACKAGE_ROOT] // 允许访问 根目录下所有文件, 都是合法的

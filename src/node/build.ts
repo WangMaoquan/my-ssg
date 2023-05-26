@@ -25,11 +25,11 @@ import { createVitePlugins } from './vitePlugin';
 export async function bundle(root: string, config: SiteConfig) {
   try {
     // 将config 抽离 通过 isServer 标志区分
-    const resolveViteBuildConfig = (isServer: boolean) => {
+    const resolveViteBuildConfig = async (isServer: boolean) => {
       return {
         mode: 'production', // 指定模式
         root,
-        plugins: createVitePlugins({ config }),
+        plugins: await createVitePlugins({ config }),
         ssr: {
           // 注意加上这个配置，防止 cjs 产物中 require ESM 的产物，因为 react-router-dom 的产物为 ESM 格式
           noExternal: ['react-router-dom']
@@ -49,11 +49,11 @@ export async function bundle(root: string, config: SiteConfig) {
     };
 
     const clientBuild = async () => {
-      return viteBuild(resolveViteBuildConfig(false));
+      return viteBuild(await resolveViteBuildConfig(false));
     };
 
     const serverBuild = async () => {
-      return viteBuild(resolveViteBuildConfig(true));
+      return viteBuild(await resolveViteBuildConfig(true));
     };
 
     // const { default: ora } = await import('ora'); // 换成 dynamicImport

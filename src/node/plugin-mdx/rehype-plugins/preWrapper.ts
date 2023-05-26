@@ -18,7 +18,7 @@ export const rehypePluginPreWrapper: Plugin<[], Root> = () => {
         const codeClassName = codeNode.properties?.className?.toString() || '';
         // lang-js
         const lang = codeClassName.split('-')[1];
-        codeNode.properties.className = '';
+        // codeNode.properties.className = '';
 
         /**
          * 将原来的 node 复制

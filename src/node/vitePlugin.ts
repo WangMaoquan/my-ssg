@@ -11,7 +11,7 @@ interface CreateVitePluginOptions {
   restart?: RestartDevServer;
 }
 
-export function createVitePlugins({
+export async function createVitePlugins({
   config,
   restart
 }: CreateVitePluginOptions) {
@@ -22,6 +22,6 @@ export function createVitePlugins({
     pluginRoutes({
       root: config.root
     }),
-    pluginMdxRollup()
+    await pluginMdxRollup()
   ];
 }
