@@ -29,7 +29,7 @@ export async function bundle(root: string, config: SiteConfig) {
       return {
         mode: 'production', // 指定模式
         root,
-        plugins: [...createVitePlugins({ config })],
+        plugins: createVitePlugins({ config }),
         ssr: {
           // 注意加上这个配置，防止 cjs 产物中 require ESM 的产物，因为 react-router-dom 的产物为 ESM 格式
           noExternal: ['react-router-dom']
